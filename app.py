@@ -3,6 +3,7 @@ import os
 from flask import Flask, render_template, request
 
 from pdf_reader import get_pdf_text, split_into_chunks
+from vector_store import create_embeddings
 
 app = Flask(__name__)
 
@@ -40,7 +41,6 @@ def upload_file():
     # Save the uploaded PDF file to the "UPLOAD_FOLDER" folder and get the file location
     save_folder = app.config["UPLOAD_FOLDER"]
 
-    
     file_location = os.path.join(save_folder, uploaded_pdf.filename) # type: ignore
 
     # Save the uploaded PDF file to the specified file location
@@ -52,10 +52,12 @@ def upload_file():
     # Split the extracted lecture notes into chunks of a specified maximum size
     lecture_chunks = split_into_chunks(lecture_notes)
 
+    chunk_vectors = create_embeddings(lecture_chunks)
+
+    print(chunk_vectors.shape)
+
     # Return a success message to show that the file has been uploaded and processed successfully
     return "PDF uploaded and processed successfully"
-
-
 
 
 if __name__ == "__main__":
