@@ -1,7 +1,5 @@
 # AI Study Assistant
 
-# AI Study Assistant
-
 A full-stack web application designed to help students efficiently parse, chunk, and analyze academic PDF textbooks and notes using natural language processing. 
 
 ## Features (Current Milestone)
