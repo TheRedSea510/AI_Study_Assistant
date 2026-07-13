@@ -2,6 +2,7 @@ import os
 
 from flask import Flask, render_template, request
 
+from ai_model import answer_question
 from pdf_reader import get_pdf_text, split_into_chunks
 from vector_store import build_vector_database, create_embeddings, search_notes
 
@@ -62,6 +63,10 @@ def upload_file():
 
     for answer in results:
         print(answer)
+
+    results = search_notes("What is reinforcement learning?", search_index, lecture_chunks)
+    answer = answer_question("What is reinforcement learning?", results)
+    print(answer)
 
 
     # Return a success message to show that the file has been uploaded and processed successfully
