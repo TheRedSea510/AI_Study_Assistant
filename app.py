@@ -3,7 +3,7 @@ import os
 from flask import Flask, render_template, request
 
 from pdf_reader import get_pdf_text, split_into_chunks
-from vector_store import create_embeddings
+from vector_store import build_vector_database, create_embeddings, search_notes
 
 app = Flask(__name__)
 
@@ -55,6 +55,14 @@ def upload_file():
     chunk_vectors = create_embeddings(lecture_chunks)
 
     print(chunk_vectors.shape)
+
+    search_index = build_vector_database(chunk_vectors)
+
+    results = search_notes("What is reinforcement learning?", search_index, lecture_chunks)
+
+    for answer in results:
+        print(answer)
+
 
     # Return a success message to show that the file has been uploaded and processed successfully
     return "PDF uploaded and processed successfully"
