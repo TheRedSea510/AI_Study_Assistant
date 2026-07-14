@@ -1,43 +1,91 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>AI Study Assistant</title>
-    <link rel-"stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-<h1>AI Study Assistant</h1>
+<div class="container">
 
-<p>Upload your lecture notes in a pdf file and let the AI help you study!</p>
+    <header>
 
-<form action="/upload" method="POST" enctype="multipart/form-data">
+        <h1>AI Study Assistant</h1>
 
-    <input type="file" name="pdf">
+        <p>
+            Upload your lecture notes and let AI help you revise more effectively.
+        </p>
 
-    <button type="Submit">
-        Upload PDF
-    </button>
+    </header>
 
-</form>
 
-<h2>Ask a question about your lecture notes:</h2>
-<form action="/ask" method="POST">
+    <div class="top-section">
 
-    <input type="text" name="question" placeholder="Ask something about your notes...">
-    <button type="submit">
-        Ask AI
-    </button>
-</form>
+        <div class="card">
 
-{% if upload_message %}
-    <p>{{ upload_message }}</p>
-{% endif %}
+            <h2>Upload Lecture Notes</h2>
 
-{% if ai_answer %}
-    <h3>AI Answer:</h3>
-    <p>{{ ai_answer }}</p>
-{% endif %}
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+
+                <input type="file" name="pdf">
+
+                <button type="submit">
+                    Upload PDF
+                </button>
+
+            </form>
+
+            {% if upload_message %}
+                <p>{{ upload_message }}</p>
+            {% endif %}
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Ask a Question</h2>
+
+            <form action="/ask" method="POST">
+
+                <input
+                    type="text"
+                    name="question"
+                    placeholder="Ask something about your lecture notes..."
+                    required
+                >
+
+                <button type="submit">
+                    Ask AI
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>AI Answer</h2>
+
+        {% if ai_answer %}
+
+            <p>{{ ai_answer }}</p>
+
+        {% else %}
+
+            <p>Your answer will appear here.</p>
+
+        {% endif %}
+
+    </div>
+
+</div>
 
 </body>
+
 </html>
