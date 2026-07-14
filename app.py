@@ -21,7 +21,7 @@ stored_index = None
 @app.route("/")
 # Define the home route that renders the index.html template
 def home():
-    return render_template("index.html")
+    return render_template("index.html", upload_message=None, ai_answer=None)
 
 
 @app.route("/upload", methods=["POST"])
@@ -66,7 +66,7 @@ def upload_file():
     stored_index = build_vector_database(stored_embeddings)
 
     # Return a success message to show that the file has been uploaded and processed successfully
-    return "PDF uploaded and processed successfully"
+    return render_template("index.html", upload_message="File uploaded and processed successfully!", ai_answer=None)
 
 @app.route("/ask", methods=["POST"])
 def ask_question():
@@ -78,7 +78,7 @@ def ask_question():
     matching_chunks = search_notes(question, stored_index, stored_chunks)
     ai_response = answer_question(question, matching_chunks)
 
-    return ai_response
+    return render_template("index.html", upload_message=None, ai_answer=ai_response)
 
 
 
