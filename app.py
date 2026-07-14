@@ -13,6 +13,10 @@ UPLOAD_FOLDER = "uploads"
 # Make sure the upload folder exists
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
+stored_chunks = None
+stored_embeddings = None
+stored_index = None
+
 
 @app.route("/")
 # Define the home route that renders the index.html template
@@ -23,6 +27,10 @@ def home():
 @app.route("/upload", methods=["POST"])
 # Define the upload route that handles PDF file uploads and processing
 def upload_file():
+
+    global stored_chunks
+    global stored_embeddings
+    global stored_index
 
     # Check if a "pdf" file is present in the request.files dictionary
     if "pdf" not in request.files:
@@ -51,26 +59,27 @@ def upload_file():
     lecture_notes = get_pdf_text(file_location)
 
     # Split the extracted lecture notes into chunks of a specified maximum size
-    lecture_chunks = split_into_chunks(lecture_notes)
+    stored_chunks = split_into_chunks(lecture_notes)
 
-    chunk_vectors = create_embeddings(lecture_chunks)
+    stored_embeddings = create_embeddings(stored_chunks)
 
-    print(chunk_vectors.shape)
-
-    search_index = build_vector_database(chunk_vectors)
-
-    results = search_notes("What is reinforcement learning?", search_index, lecture_chunks)
-
-    for answer in results:
-        print(answer)
-
-    results = search_notes("What is reinforcement learning?", search_index, lecture_chunks)
-    answer = answer_question("What is reinforcement learning?", results)
-    print(answer)
-
+    stored_index = build_vector_database(stored_embeddings)
 
     # Return a success message to show that the file has been uploaded and processed successfully
     return "PDF uploaded and processed successfully"
+
+@app.route("/ask", methods=["POST"])
+def ask_question():
+    question = request.form.get("question")
+
+    if stored_chunks is None or stored_index is None:
+        return "No lecture notes available. Please upload a PDF first.", 400
+    
+    matching_chunks = search_notes(question, stored_index, stored_chunks)
+    ai_response = answer_question(question, matching_chunks)
+
+    return ai_response
+
 
 
 if __name__ == "__main__":
