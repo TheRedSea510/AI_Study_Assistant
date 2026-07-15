@@ -1,5 +1,5 @@
 import os
-
+import numpy as np
 from flask import Flask, render_template, request
 
 from ai_model import answer_question
@@ -59,9 +59,16 @@ def upload_file():
     lecture_notes = get_pdf_text(file_location)
 
     # Split the extracted lecture notes into chunks of a specified maximum size
-    stored_chunks = split_into_chunks(lecture_notes)
+    new_chunks = split_into_chunks(lecture_notes)
 
-    stored_embeddings = create_embeddings(stored_chunks)
+    if stored_chunks is None:
+        stored_chunks = new_chunks
+    else:
+        stored_chunks.extend(new_chunks)
+
+    new_embeddings = create_embeddings(new_chunks)
+
+    stored_embeddings = np.vstack([stored_embeddings, new_embeddings]) if stored_embeddings is not None else new_embeddings
 
     stored_index = build_vector_database(stored_embeddings)
 
@@ -73,6 +80,8 @@ def ask_question():
     question = request.form.get("question")
 
     if stored_chunks is None or stored_index is None:
+        print("Chunks:", stored_chunks is None)
+        print("Index:", stored_index is None)
         return "No lecture notes available. Please upload a PDF first.", 400
     
     matching_chunks = search_notes(question, stored_index, stored_chunks)
