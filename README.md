@@ -1,32 +1,68 @@
 # AI Study Assistant
 
-A full-stack Retrieval-Augmented Generation (RAG) web application designed to help students upload academic PDFs, automatically chunk the text, and ask natural language questions against their lecture notes using vector search and generative AI.
+A full-stack Retrieval-Augmented Generation (RAG) web application designed to help students upload academic PDFs, automatically process lecture notes, and ask natural language questions against their documents using semantic search and generative AI.
+
+The system combines document processing, vector embeddings, FAISS similarity search, and Google's Gemini LLM to retrieve relevant sections of uploaded lecture notes and generate accurate answers with source citations.
 
 ## Features (Current Milestone)
-* **PDF Text Extraction:** Extracts raw text from user-uploaded PDF files, automatically clearing layout noise, redundant spacing, and page number formatting.
-* **Smart Sentence-Aware Chunking:** Utilizes a custom punctuation-based regex splitter to cluster text into clean, length-restricted semantic windows without cutting sentences in half.
-* **Local Vector Storage:** Embeds extracted chunks locally using the `all-MiniLM-L6-v2` Sentence-Transformer and indexes them with a high-performance **FAISS** (Facebook AI Similarity Search) database.
-* **Fault-Tolerant Gemini Integration:** Connected to the Google GenAI SDK (`gemini-3.5-flash`) with built-in **exponential backoff retries** and automatic model failovers to gracefully bypass free-tier `503 Service Unavailable` errors.
-* **Multiple PDF uploads** Able to upload multiple pdfs without erasing the data of previous pdfs uploaded in the session using NumPy to appened embeddings and chunks instead of replacing the previous data stored.
-* **Flask Backend Integration:** A lightweight, modular Python/Flask server driving the data pipeline and exposing intuitive endpoints for front-end templates.
+
+* **PDF Text Extraction & Cleaning:** Extracts text from user-uploaded PDF files while removing unnecessary formatting noise, redundant spacing, and irrelevant page number artifacts.
+
+* **Page-Aware Sentence Chunking:** Splits documents into sentence-aware chunks without cutting sentences in half. Each chunk stores additional metadata including:
+  - Original PDF filename
+  - Page number
+  - Extracted text content
+
+* **Semantic Vector Search:** Converts document chunks into embeddings using the `all-MiniLM-L6-v2` Sentence-Transformer model and stores them in a FAISS vector index for efficient similarity-based retrieval.
+
+* **Citation-Aware RAG Pipeline:** Retrieved chunks maintain their original document metadata, allowing generated answers to reference the exact PDF and page number used as supporting evidence.
+
+* **Gemini AI Integration:** Uses the Google GenAI SDK (`gemini-3.5-flash`) to generate natural explanations based only on retrieved lecture material, reducing hallucinations by restricting responses to provided context.
+
+* **Fault-Tolerant API Handling:** Implements exponential backoff retries and automatic model fallback handling to gracefully manage temporary Gemini API availability issues.
+
+* **Multiple PDF Support:** Allows users to upload multiple PDFs within the same session. New documents are processed and added alongside existing uploaded material instead of replacing previous data.
+
+* **Flask Backend Integration:** A lightweight modular Flask backend connects the frontend interface with the complete document processing and AI pipeline.
+
+## How It Works
+
+1. User uploads one or more PDF lecture documents.
+2. PDF text is extracted page-by-page and cleaned.
+3. The text is split into smaller sentence-aware chunks.
+4. Each chunk is stored with metadata:
+   - Document filename
+   - Page number
+   - Chunk content
+5. Chunks are converted into numerical embeddings.
+6. FAISS searches for the most relevant chunks based on the user's question.
+7. The retrieved context is sent to Gemini.
+8. Gemini generates an answer with references to the supporting sources.
 
 ## Tech Stack
+
 * **Frontend:** HTML5, CSS3, JavaScript
 * **Backend:** Python, Flask
-* **Vector Database & Embeddings:** FAISS (FlatL2), Sentence-Transformers (`all-MiniLM-L6-v2`)
+* **Vector Database & Embeddings:** FAISS (cosine similarity search), Sentence-Transformers (`all-MiniLM-L6-v2`)
 * **LLM API:** Google GenAI SDK (`gemini-3.5-flash`, `gemini-3.1-flash-lite`)
-* **Data Processing:** PyPDF, Regular Expressions (Regex), NumPy
+* **Data Processing:** `pypdf`, Regular Expressions (Regex), NumPy
 
 ## Project Structure
-* `app.py` — Main Flask application orchestrating the upload routes, document pipeline, and similarity search queries.
-* `ai_model.py` — Handles connection to the Gemini API, prompt configuration, and resilient retry-logic handling server load.
-* `vector_store.py` — Manages local embedding generation via Sentence-Transformers and handles the FAISS similarity index.
-* `pdf_reader.py` — Core text extraction, formatting cleanup, and custom sentence-aware chunking logic.
-* `static/` & `templates/` — UI web styling, layout configurations, and user templates.
+
+* `app.py` — Main Flask application handling routes, PDF uploads, session storage, and connecting the document pipeline together.
+
+* `ai_model.py` — Handles Gemini API communication, prompt construction, context formatting, citation instructions, and retry logic.
+
+* `vector_store.py` — Creates embeddings using Sentence-Transformers, builds the FAISS vector index, and performs similarity searches.
+
+* `pdf_reader.py` — Handles PDF extraction, text cleaning, page tracking, and sentence-aware chunk generation with metadata.
+
+* `static/` & `templates/` — Frontend styling, HTML templates, and user interface components.
 
 ## Setup & Installation
 
 1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/TheRedSea510/AI_Study_Assistant.git](https://github.com/TheRedSea510/AI_Study_Assistant.git)
-   cd AI_Study_Assistant
+
+```bash
+git clone https://github.com/TheRedSea510/AI_Study_Assistant.git
+cd AI_Study_Assistant
