@@ -56,10 +56,12 @@ def upload_file():
     uploaded_pdf.save(file_location)
 
     # Get the text from the uploaded PDF file
-    lecture_notes = get_pdf_text(file_location)
+    lecture_pages = get_pdf_text(file_location)
 
     # Split the extracted lecture notes into chunks of a specified maximum size
-    new_chunks = split_into_chunks(lecture_notes)
+    new_chunks = split_into_chunks(lecture_pages, uploaded_pdf.filename)
+
+    print(new_chunks[0])
 
     if stored_chunks is None:
         stored_chunks = new_chunks
@@ -86,6 +88,13 @@ def ask_question():
     
     matching_chunks = search_notes(question, stored_index, stored_chunks)
     ai_response = answer_question(question, matching_chunks)
+    print("\nRetrieved chunks:")
+
+    for chunk in matching_chunks:
+        print("----------------")
+        print("File:", chunk["filename"])
+        print("Page:", chunk["page"])
+        print("Text:", chunk["text"])
 
     return render_template("index.html", upload_message=None, ai_answer=ai_response)
 

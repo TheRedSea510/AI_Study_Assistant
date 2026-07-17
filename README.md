@@ -7,6 +7,7 @@ A full-stack Retrieval-Augmented Generation (RAG) web application designed to he
 * **Smart Sentence-Aware Chunking:** Utilizes a custom punctuation-based regex splitter to cluster text into clean, length-restricted semantic windows without cutting sentences in half.
 * **Local Vector Storage:** Embeds extracted chunks locally using the `all-MiniLM-L6-v2` Sentence-Transformer and indexes them with a high-performance **FAISS** (Facebook AI Similarity Search) database.
 * **Fault-Tolerant Gemini Integration:** Connected to the Google GenAI SDK (`gemini-3.5-flash`) with built-in **exponential backoff retries** and automatic model failovers to gracefully bypass free-tier `503 Service Unavailable` errors.
+* **Multiple PDF uploads** Able to upload multiple pdfs without erasing the data of previous pdfs uploaded in the session using NumPy to appened embeddings and chunks instead of replacing the previous data stored.
 * **Flask Backend Integration:** A lightweight, modular Python/Flask server driving the data pipeline and exposing intuitive endpoints for front-end templates.
 
 ## Tech Stack

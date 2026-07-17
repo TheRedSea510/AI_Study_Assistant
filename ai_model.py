@@ -12,19 +12,44 @@ api_key = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=api_key)
 
 def answer_question(question, lecture_chunks):
-    lecture_notes = "\n\n".join(lecture_chunks)
+
+    contexts = []
+
+    for count, chunk in enumerate(lecture_chunks, start=1):
+          contexts.append(
+        f"""Context [{count}]
+        File: {chunk["filename"]}
+        Page: {chunk["page"]}
+
+        {chunk["text"]}
+    """
+    )
+          
+    lecture_notes = "\n\n".join(contexts)
 
     prompt = f"""
 You are an AI study assistant.
 
-Answer the student's question using ONLY the lecture notes below.
+Answer the student's question using ONLY the contexts below.
 
-If the lecture notes do not contain enough information to answer the question, say so instead of making something up.
+Every factual statement should include at least one citation.
 
-Lecture Notes:
+Do not cite contexts that were not used.
+
+Only use citation numbers that exist in the provided contexts.
+
+Whenever you use information from a context, cite it using its context number like [1] or [2].
+
+If multiple contexts support the same answer, you may cite multiple numbers like [1][3].
+
+If the answer cannot be found in the provided contexts, say that the information is not available rather than making something up.
+
+Contexts:
+
 {lecture_notes}
 
 Student Question:
+
 {question}
 """
 
@@ -43,8 +68,25 @@ Student Question:
                     contents=prompt
                 )
                 
+# ... inside your try block
                 print(f"Success using {model_name}!")
-                return response.text
+                
+                answer = response.text
+                sources = "\n\nSources:\n"
+                sources_added = False
+
+                for number, chunk in enumerate(lecture_chunks, start=1):
+
+                    if f"[{number}]" in answer:
+
+                        sources += f"[{number}] {chunk['filename']} (Page {chunk['page']})\n"
+
+                        sources_added = True
+
+                if sources_added:
+                    return answer + sources
+                else:
+                    return answer
 
             except Exception as error:
                 error_str = str(error)
