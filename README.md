@@ -4,6 +4,14 @@ A full-stack Retrieval-Augmented Generation (RAG) web application designed to he
 
 The system combines document processing, vector embeddings, FAISS similarity search, and Google's Gemini LLM to retrieve relevant sections of uploaded lecture notes and generate accurate answers with source citations.
 
+## Motivation
+
+This project was inspired by my own personal experience using AI as a study tool. Though AI assistants can answer questions accurately using uploaded files, I found they would often start implementing external knowledge instead of relying solely on the notes I provided. This slowly became a problem when verifying with my notes as the answers became inconsistent to the materials I was being assessed on.
+
+I wanted to build a solution that retrieves information directly from the materials I made or was given so that users would have a much greater confidence that the answers are grounded in the provided documents.
+
+Alongside solving my personal request, this projetct has allowed me to develop knowledge of vector embeddings, Retrieval-Augmented Generation (RAG), frontend and backend development, semantic search with FAISS and integrating Large Language Models into real-world problems (being able to put my degree knowledge to use).
+
 ## Features (Current Milestone)
 
 * **PDF Text Extraction & Cleaning:** Extracts text from user-uploaded PDF files while removing unnecessary formatting noise, redundant spacing, and irrelevant page number artifacts.
