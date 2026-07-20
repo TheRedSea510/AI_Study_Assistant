@@ -68,7 +68,6 @@ Student Question:
                     contents=prompt
                 )
                 
-# ... inside your try block
                 print(f"Success using {model_name}!")
                 
                 answer = response.text
