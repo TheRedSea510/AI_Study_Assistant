@@ -6,7 +6,7 @@ The system combines document processing, vector embeddings, FAISS similarity sea
 
 ## Motivation
 
-This project was inspired by my own personal experience using AI as a study tool. Though AI assistants can answer questions accurately using uploaded files, I found they would often start implementing external knowledge instead of relying solely on the notes I provided. This slowly became a problem when verifying with my notes as the answers became inconsistent to the materials I was being assessed on.
+This project was inspired by my own personal experiences using AI as a study tool. Though AI assistants can answer questions accurately using uploaded files, I found they would often start implementing external knowledge instead of relying solely on the notes I provided. This slowly became a problem when verifying with my notes as the answers became inconsistent to the materials I was being assessed on.
 
 I wanted to build a solution that retrieves information directly from the materials I made or was given so that users would have a much greater confidence that the answers are grounded in the provided documents.
 
