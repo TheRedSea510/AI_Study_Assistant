@@ -1,15 +1,23 @@
 from tracemalloc import start
 
 from pypdf import PdfReader
+from pypdf.errors import PdfReadError
 import re
 
 # Gets the pdf text from the pdf being uploaded and the loacation of the file
 def get_pdf_text(file_location):
 
+    try:
+        pdf_document = PdfReader(file_location)
+
+    except PdfReadError:
+        return None
+
     # Create a PDF reader object to read the uploaded PDF file
     pdf_document = PdfReader(file_location)
 
     pages = []
+
  
     for page_number, page in enumerate(pdf_document.pages, start=1):
 

@@ -29,7 +29,20 @@
 
             <form action="/upload" method="POST" enctype="multipart/form-data">
 
-                <input type="file" name="pdf">
+                <label for="pdf-upload" class="upload-label">
+                    Choose PDF
+                </label>
+
+                <input
+                    id="pdf-upload"
+                    type="file"
+                    name="pdf"
+                    hidden
+                >
+
+                <p id="selected-file">
+                    No file detected
+                </p>
 
                 <button type="submit">
                     Upload PDF
@@ -37,8 +50,33 @@
 
             </form>
 
-            {% if upload_message %}
-                <p>{{ upload_message }}</p>
+            <form action="/clear" method="POST">
+
+                <button class="clear-button" type="submit">
+                    Clear PDFs
+                </button>
+
+            </form>
+
+            <h3>Uploaded PDFs: ({{ uploaded_pdfs|length }})</h3>
+
+            {% if uploaded_pdfs %}
+
+            <div class="pdf-list">
+                {% for pdf in uploaded_pdfs %}
+
+                    <div class="pdf-item">
+                        {{ pdf }}
+                    </div>
+
+                {% endfor %}
+                
+            </div>
+
+            {% else %}
+
+            <p>No PDFs uploaded yet.</p>
+
             {% endif %}
 
         </div>
@@ -85,6 +123,22 @@
     </div>
 
 </div>
+
+<script>
+
+    const fileInput = document.getElementById("pdf-upload")
+    const fileName = document.getElementById("selected-file")
+
+    fileInput.addEventListener("change", function(){
+        if(fileInput.files.length > 0){
+            fileName.textContent = fileInput.files[0].name;
+        }
+        else{
+            fileName.textContent = "No file detected"
+        }
+    });
+
+</script>
 
 </body>
 
